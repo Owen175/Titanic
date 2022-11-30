@@ -9,6 +9,28 @@ import tensorflow.compat.v2.feature_column as fc
 
 import tensorflow as tf
 
+
+class Person:
+  def __init__(self, person_sex, age, n_siblings_spouses, ticket_fare, ticket_class, deck, embark_town, alone, parch=0):
+    self.person_sex = person_sex
+    self.age = age
+    self.n_siblings_spouses = n_siblings_spouses
+    self.parch = parch
+    self.ticket_fare = ticket_fare
+    self.ticket_class = ticket_class
+    self.deck = deck
+    self.embark_town = embark_town
+    self.alone = alone
+    self.dataframe = pd.DataFrame({"sex":[self.person_sex],
+                      "age":[self.age],
+                      "n_siblings_spouses":[self.n_siblings_spouses],
+                      "parch":[self.parch],
+                      "fare":[self.ticket_fare],
+                      "class":[self.ticket_class],
+                      "deck":[self.deck],
+                      "embark_town":[self.embark_town],
+                      "alone":[self.alone]})
+
 dftrain = pd.read_csv('https://storage.googleapis.com/tf-datasets/titanic/train.csv') # training data
 dfeval = pd.read_csv('https://storage.googleapis.com/tf-datasets/titanic/eval.csv') # testing data
 
@@ -57,21 +79,15 @@ eval_input_fn = make_input_fn(dfeval, y_eval, num_epochs=1, shuffle=False)
 result = list(linear_est.predict(eval_input_fn))
 
 
+
 def did_they_survive():
-  #print(y_eval)
-  dataframe = pd.DataFrame({"sex":["female"],
-                      "age":[72],
-                      "n_siblings_spouses":[0],
-                      "parch":[0],
-                      "fare":[157.0],
-                      "class":["Second"],
-                      "deck":["A"],
-                      "embark_town":["Southampton"],
-                      "alone":["y"]})
+  person = Person('female', 72, 0, 157.0, 'Second', 'A', 'Southampton', 'y',0)
+  dataframe = person.dataframe
 
   eval_1 = pd.DataFrame({0:[0]})
   #print(dataframe)
   eval_input_fn = make_input_fn(dataframe, eval_1, num_epochs=2, shuffle=False)
   result = list(linear_est.predict(eval_input_fn))
   print(result[0]['probabilities'][1])
+
 did_they_survive()
